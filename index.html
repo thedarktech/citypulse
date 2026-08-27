@@ -158,7 +158,7 @@ body::before {
 .cs2{background:linear-gradient(140deg,#3d1007 0%,#b45309 45%,#f97316 75%,#fdba74 100%)}
 .cs3{background:linear-gradient(140deg,#0c1a38 0%,#1e3f76 45%,#2563eb 75%,#60a5fa 100%)}
 
-.cslide-decor{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cslide-decor{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .cslide-decor::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);top:-50px;right:-30px}
 .cslide-decor::after{content:'';position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.05);bottom:-20px;left:30px}
 
@@ -166,16 +166,17 @@ body::before {
   position:absolute;inset:0;padding:14px 16px;
   display:flex;flex-direction:column;justify-content:flex-end;
   background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.2) 55%,transparent 100%);
+  z-index:1;
 }
 .cslide-tag{
   position:absolute;top:12px;left:12px;
-  background:rgba(244,63,94,.85);backdrop-filter:blur(6px);
+  background:rgba(244,63,94,.92);
   color:#fff;font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
   padding:3px 8px;border-radius:20px;font-family:var(--ff-b);
 }
-.cslide-by{font-size:10px;color:rgba(255,255,255,.6);font-family:var(--ff-b);margin-bottom:3px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
-.cslide-title{font-size:21px;font-weight:700;color:#fff;font-family:var(--ff-d);line-height:1.15;margin-bottom:6px}
-.cslide-meta{display:flex;align-items:center;gap:8px}
+.cslide-by{font-size:10px;color:rgba(255,255,255,.75);font-family:var(--ff-b);margin-bottom:3px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;position:relative}
+.cslide-title{font-size:21px;font-weight:700;color:#fff;font-family:var(--ff-d);line-height:1.15;margin-bottom:6px;position:relative}
+.cslide-meta{display:flex;align-items:center;gap:8px;position:relative}
 .cslide-date{color:rgba(255,255,255,.82);font-size:12px;font-family:var(--ff-b);font-weight:500}
 .cslide-price{
   font-size:11px;font-weight:700;font-family:var(--ff-b);
