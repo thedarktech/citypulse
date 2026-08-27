@@ -1,0 +1,1201 @@
+<title>CityPulse</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CityPulse">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+
+<style>
+:root {
+  --accent: #7C3AED;
+  --accent-light: #EDE9FE;
+  --accent-2: #F43F5E;
+  --accent-2-light: #FFE4E8;
+  --premium: #F59E0B;
+  --premium-light: #FEF3C7;
+  --success: #16A34A;
+  --bg-phone: #F7F5FF;
+  --surface: #FFFFFF;
+  --surface-2: #F0EDF8;
+  --border: #E8E2F5;
+  --text-1: #12102A;
+  --text-2: #4A4468;
+  --text-3: #8880AA;
+  --ff-d: 'Space Grotesk', sans-serif;
+  --ff-b: 'Inter', sans-serif;
+  --r-sm: 10px; --r-md: 16px; --r-lg: 22px; --r-xl: 28px;
+  --sh-sm: 0 1px 4px rgba(18,16,42,0.07);
+  --sh-md: 0 4px 16px rgba(18,16,42,0.10);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body {
+  background: #070611;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ff-b);
+  padding: 32px 16px;
+}
+
+body::before {
+  content:'';
+  position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 25%, rgba(124,58,237,.18) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 50% at 85% 75%, rgba(244,63,94,.12) 0%, transparent 65%);
+}
+
+.page-wrap {
+  display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;
+}
+
+.page-label {
+  color:rgba(255,255,255,.35);
+  font-family:var(--ff-d);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* ── Phone Frame ── */
+.phone {
+  width:390px;height:844px;
+  background:var(--bg-phone);
+  border-radius:52px;
+  border:10px solid #15112e;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.07),
+    0 0 0 2px #0a0818,
+    0 40px 100px rgba(0,0,0,.7),
+    inset 0 0 0 1px rgba(255,255,255,.06);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+
+/* Dynamic Island */
+.di {
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  width:118px;height:34px;background:#070611;border-radius:20px;z-index:100;
+}
+
+/* Status Bar */
+.statusbar {
+  height:52px;background:var(--bg-phone);
+  display:flex;align-items:flex-end;padding:0 26px 9px;
+  justify-content:space-between;flex-shrink:0;position:relative;z-index:50;
+}
+.sb-time{font-family:var(--ff-b);font-size:15px;font-weight:600;color:var(--text-1)}
+.sb-icons{display:flex;gap:5px;align-items:center}
+.sb-icons svg{width:16px;height:16px;fill:var(--text-1)}
+
+/* Screens */
+.screens{flex:1;position:relative;overflow:hidden}
+.screen{
+  position:absolute;inset:0;background:var(--bg-phone);
+  overflow-y:auto;overflow-x:hidden;
+  padding-bottom:88px;display:none;
+  -webkit-overflow-scrolling:touch;
+}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{display:block}
+
+/* Tab Bar */
+.tabbar {
+  height:82px;
+  background:rgba(247,245,255,.96);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(124,58,237,.1);
+  display:flex;align-items:flex-start;padding-top:10px;
+  flex-shrink:0;z-index:90;
+}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;border:none;background:none}
+.tab svg{width:22px;height:22px;fill:none;stroke:var(--text-3);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.tab.active svg{stroke:var(--accent)}
+.tab-lbl{font-size:10px;font-weight:500;color:var(--text-3);font-family:var(--ff-b);transition:color .15s}
+.tab.active .tab-lbl{color:var(--accent);font-weight:600}
+.tab-icon-wrap{position:relative}
+.notif-dot{position:absolute;top:-1px;right:-2px;width:7px;height:7px;background:var(--accent-2);border-radius:50%;border:1.5px solid rgba(247,245,255,1)}
+
+/* Home indicator */
+.home-ind{height:6px;display:flex;justify-content:center;padding-bottom:8px;flex-shrink:0;align-items:center}
+.home-ind-bar{width:130px;height:5px;background:var(--text-1);border-radius:3px;opacity:.18}
+
+/* ──────────────────────────────────────────
+   DISCOVER SCREEN
+────────────────────────────────────────── */
+.app-hdr{padding:4px 20px 10px;display:flex;align-items:center;justify-content:space-between;background:var(--bg-phone)}
+.loc-btn{background:none;border:none;cursor:pointer;text-align:left}
+.loc-eyebrow{font-size:11px;color:var(--text-3);font-family:var(--ff-b);font-weight:500}
+.loc-name{font-size:17px;font-weight:700;color:var(--text-1);font-family:var(--ff-d);display:flex;align-items:center;gap:3px}
+.loc-chevron{font-size:12px;color:var(--accent)}
+.hdr-btns{display:flex;gap:8px}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:var(--sh-sm);position:relative;
+}
+.icon-btn svg{width:17px;height:17px;stroke:var(--text-2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Carousel */
+.carousel-wrap{padding:0 20px 4px}
+.sponsored-lbl{
+  font-size:10px;font-weight:700;color:var(--accent-2);
+  letter-spacing:.1em;text-transform:uppercase;font-family:var(--ff-b);
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.sponsored-lbl::before{content:'';width:16px;height:2px;background:var(--accent-2);border-radius:1px}
+
+.carousel{
+  position:relative;border-radius:var(--r-lg);overflow:hidden;
+  aspect-ratio:16/9;cursor:pointer;
+  box-shadow:0 10px 36px rgba(124,58,237,.22);
+}
+.carousel-track{display:flex;width:300%;height:100%;transition:transform .55s cubic-bezier(.25,.46,.45,.94)}
+.cslide{width:33.333%;height:100%;position:relative;flex-shrink:0}
+.cs1{background:linear-gradient(140deg,#160530 0%,#4c1d95 45%,#7c3aed 75%,#a78bfa 100%)}
+.cs2{background:linear-gradient(140deg,#3d1007 0%,#b45309 45%,#f97316 75%,#fdba74 100%)}
+.cs3{background:linear-gradient(140deg,#0c1a38 0%,#1e3f76 45%,#2563eb 75%,#60a5fa 100%)}
+
+.cslide-decor{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cslide-decor::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);top:-50px;right:-30px}
+.cslide-decor::after{content:'';position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.05);bottom:-20px;left:30px}
+
+.cslide-content{
+  position:absolute;inset:0;padding:14px 16px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.2) 55%,transparent 100%);
+}
+.cslide-tag{
+  position:absolute;top:12px;left:12px;
+  background:rgba(244,63,94,.85);backdrop-filter:blur(6px);
+  color:#fff;font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;font-family:var(--ff-b);
+}
+.cslide-by{font-size:10px;color:rgba(255,255,255,.6);font-family:var(--ff-b);margin-bottom:3px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.cslide-title{font-size:21px;font-weight:700;color:#fff;font-family:var(--ff-d);line-height:1.15;margin-bottom:6px}
+.cslide-meta{display:flex;align-items:center;gap:8px}
+.cslide-date{color:rgba(255,255,255,.82);font-size:12px;font-family:var(--ff-b);font-weight:500}
+.cslide-price{
+  font-size:11px;font-weight:700;font-family:var(--ff-b);
+  padding:2px 8px;border-radius:20px;
+}
+.cp-paid{background:rgba(255,255,255,.2);color:#fff}
+.cp-free{background:rgba(22,163,74,.6);color:#fff}
+.cp-premium{background:rgba(245,158,11,.85);color:#1a0a00}
+
+.carousel-dots{display:flex;justify-content:center;gap:5px;margin-top:10px}
+.dot{width:6px;height:6px;border-radius:3px;background:var(--border);transition:all .3s;cursor:pointer;border:none}
+.dot.active{width:20px;background:var(--accent)}
+
+/* Category Pills */
+.pills-wrap{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:14px 0 0}
+.pills-wrap::-webkit-scrollbar{display:none}
+.pills-track{display:flex;gap:8px;padding:0 20px;width:max-content}
+.pill{
+  padding:7px 15px;border-radius:20px;font-size:13px;font-weight:500;
+  font-family:var(--ff-b);border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text-2);cursor:pointer;
+  transition:all .2s;white-space:nowrap;box-shadow:var(--sh-sm);
+}
+.pill.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.3)}
+
+/* Section Header */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px}
+.sec-title{font-size:18px;font-weight:700;font-family:var(--ff-d);color:var(--text-1)}
+.sec-link{font-size:13px;font-weight:500;color:var(--accent);font-family:var(--ff-b);cursor:pointer}
+
+/* Event Cards (Vertical Feed) */
+.events-feed{padding:0 20px;display:flex;flex-direction:column;gap:11px}
+.ev-card{
+  background:var(--surface);border-radius:var(--r-md);border:1px solid var(--border);
+  box-shadow:var(--sh-sm);cursor:pointer;display:flex;height:96px;
+  transition:transform .15s,box-shadow .15s;overflow:hidden;
+}
+.ev-card:active{transform:scale(.98)}
+
+.ev-thumb{width:96px;flex-shrink:0;position:relative;overflow:hidden}
+.ev-thumb-bg{width:100%;height:100%}
+.ev-thumb-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px}
+.t-music{background:linear-gradient(140deg,#3b0764,#7c3aed)}
+.t-food{background:linear-gradient(140deg,#78350f,#f97316)}
+.t-arts{background:linear-gradient(140deg,#0c4a6e,#06b6d4)}
+.t-sports{background:linear-gradient(140deg,#052e16,#16a34a)}
+.t-night{background:linear-gradient(140deg,#1c1c2e,#be185d)}
+.t-wellness{background:linear-gradient(140deg,#14532d,#4ade80)}
+
+.ev-body{flex:1;padding:11px 13px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.ev-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-family:var(--ff-b)}
+.ev-name{font-size:14px;font-weight:600;color:var(--text-1);font-family:var(--ff-d);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.ev-bottom{display:flex;align-items:center;justify-content:space-between}
+.ev-info{display:flex;flex-direction:column;gap:1px}
+.ev-when{font-size:11px;color:var(--text-3);font-family:var(--ff-b)}
+.ev-where{font-size:11px;color:var(--text-2);font-weight:500;font-family:var(--ff-b)}
+
+.join-sm{
+  padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;
+  font-family:var(--ff-b);border:none;cursor:pointer;transition:all .2s;
+  background:var(--accent);color:#fff;flex-shrink:0;
+}
+.join-sm.joined{background:var(--surface-2,#f0edf8);color:var(--text-3);border:1.5px solid var(--border)}
+
+/* Horizontal Scroll */
+.h-wrap{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.h-wrap::-webkit-scrollbar{display:none}
+.h-track{display:flex;gap:11px;padding:0 20px;width:max-content}
+
+.hev-card{
+  width:156px;border-radius:var(--r-md);overflow:hidden;background:var(--surface);
+  border:1px solid var(--border);cursor:pointer;flex-shrink:0;box-shadow:var(--sh-sm);
+}
+.hev-thumb{height:96px;position:relative;overflow:hidden}
+.hev-thumb-bg{width:100%;height:100%}
+.hev-thumb-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px}
+.hev-info{padding:9px 10px}
+.hev-name{font-size:13px;font-weight:600;font-family:var(--ff-d);color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.hev-date{font-size:11px;color:var(--text-3);font-family:var(--ff-b)}
+.hev-price{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:var(--accent);font-family:var(--ff-b)}
+.hev-price.free-tag{color:var(--success)}
+
+/* Premium Upsell Banner */
+.prem-banner{
+  margin:16px 20px 4px;
+  background:linear-gradient(135deg,#4a1d96 0%,#7c3aed 60%,#a78bfa 100%);
+  border-radius:var(--r-md);padding:16px 16px 16px 18px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  box-shadow:0 8px 28px rgba(124,58,237,.28);position:relative;overflow:hidden;
+}
+.prem-banner::before{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.prem-banner-icon{font-size:30px;flex-shrink:0;position:relative;z-index:1}
+.prem-banner-txt{flex:1;position:relative;z-index:1}
+.prem-banner-title{font-size:15px;font-weight:700;color:#fff;font-family:var(--ff-d);margin-bottom:2px}
+.prem-banner-sub{font-size:12px;color:rgba(255,255,255,.72);font-family:var(--ff-b)}
+.prem-banner-cta{
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+  border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;
+  color:#fff;font-family:var(--ff-b);white-space:nowrap;flex-shrink:0;position:relative;z-index:1;
+}
+
+/* ──────────────────────────────────────────
+   EXPLORE SCREEN
+────────────────────────────────────────── */
+.screen-hdr{padding:4px 20px 14px}
+.screen-ttl{font-size:24px;font-weight:700;font-family:var(--ff-d);color:var(--text-1)}
+.screen-sub{font-size:13px;color:var(--text-3);font-family:var(--ff-b);margin-top:2px}
+
+.search-wrap{padding:0 20px 14px}
+.search-bar{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:11px 15px;
+  display:flex;align-items:center;gap:10px;box-shadow:var(--sh-sm);
+}
+.search-bar svg{width:16px;height:16px;stroke:var(--text-3);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0}
+.search-bar input{
+  border:none;background:none;font-size:14px;color:var(--text-1);
+  font-family:var(--ff-b);outline:none;width:100%;
+}
+.search-bar input::placeholder{color:var(--text-3)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 20px}
+.cat-tile{
+  aspect-ratio:1;border-radius:var(--r-md);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:5px;cursor:pointer;
+  transition:transform .15s;border:1px solid var(--border);
+}
+.cat-tile:active{transform:scale(.95)}
+.cat-emoji{font-size:28px}
+.cat-lbl{font-size:12px;font-weight:600;font-family:var(--ff-d)}
+.ct-music{background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#4c1d95}
+.ct-food{background:linear-gradient(135deg,#ffedd5,#fed7aa);color:#92400e}
+.ct-arts{background:linear-gradient(135deg,#e0f2fe,#bae6fd);color:#0e4f6b}
+.ct-sports{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#14532d}
+.ct-night{background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#831843}
+.ct-wellness{background:linear-gradient(135deg,#f0fdf4,#dcfce7);color:#064e3b}
+
+.trending-list{padding:0 20px;display:flex;flex-direction:column;gap:0}
+.trend-item{
+  display:flex;align-items:center;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--border);cursor:pointer;
+}
+.trend-item:last-child{border-bottom:none}
+.trend-num{font-size:14px;font-weight:700;font-family:var(--ff-d);color:var(--text-3);width:20px;text-align:center;flex-shrink:0}
+.trend-info{flex:1;min-width:0}
+.trend-name{font-size:14px;font-weight:600;font-family:var(--ff-d);color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trend-cat{font-size:11px;color:var(--text-3);font-family:var(--ff-b);margin-top:1px}
+.trend-count{font-size:12px;font-weight:600;color:var(--accent);font-family:var(--ff-b)}
+
+/* ──────────────────────────────────────────
+   MY EVENTS SCREEN
+────────────────────────────────────────── */
+.my-tabs{display:flex;border-bottom:1px solid var(--border);margin:0 20px}
+.my-tab{flex:1;padding:10px 0;text-align:center;font-size:13px;font-weight:600;font-family:var(--ff-b);color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.my-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.my-ev{
+  margin:12px 20px 0;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:14px;display:flex;gap:12px;
+  box-shadow:var(--sh-sm);cursor:pointer;
+}
+.date-badge{
+  width:46px;text-align:center;background:var(--surface-2);
+  border-radius:var(--r-sm);padding:6px 4px;flex-shrink:0;border:1px solid var(--border);
+}
+.date-badge-mo{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent-2);font-family:var(--ff-b)}
+.date-badge-d{font-size:22px;font-weight:700;color:var(--text-1);font-family:var(--ff-d);line-height:1}
+.my-ev-info{flex:1;min-width:0}
+.my-ev-name{font-size:14px;font-weight:600;font-family:var(--ff-d);color:var(--text-1);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.my-ev-venue{font-size:12px;color:var(--text-3);font-family:var(--ff-b);margin-bottom:6px}
+.status-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;font-family:var(--ff-b);padding:3px 9px;border-radius:20px}
+.s-conf{background:rgba(22,163,74,.1);color:#15803d}
+.s-wait{background:rgba(245,158,11,.1);color:#b45309}
+.s-past{background:var(--surface-2);color:var(--text-3)}
+
+.empty-state{padding:40px 20px;text-align:center}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.empty-text{font-size:14px;color:var(--text-3);font-family:var(--ff-b);line-height:1.5}
+
+/* ──────────────────────────────────────────
+   PREMIUM SCREEN
+────────────────────────────────────────── */
+.prem-hero{
+  background:linear-gradient(160deg,#1a0d42 0%,#3b1080 45%,#7c3aed 100%);
+  padding:32px 24px 44px;position:relative;overflow:hidden;
+}
+.prem-hero::before{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.05)}
+.prem-hero::after{content:'';position:absolute;bottom:-70px;left:-30px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.04)}
+.prem-gold-tag{
+  display:inline-block;background:var(--premium);color:#1a0a00;
+  font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;margin-bottom:12px;font-family:var(--ff-b);position:relative;z-index:2;
+}
+.prem-crown{font-size:38px;display:block;margin-bottom:10px;position:relative;z-index:2}
+.prem-hero-title{font-size:28px;font-weight:700;color:#fff;font-family:var(--ff-d);line-height:1.15;margin-bottom:6px;position:relative;z-index:2}
+.prem-hero-sub{font-size:14px;color:rgba(255,255,255,.68);font-family:var(--ff-b);position:relative;z-index:2;line-height:1.5}
+
+/* Billing Toggle */
+.billing-wrap{padding:18px 20px 0}
+.billing-toggle{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-md);display:flex;padding:4px;
+}
+.bill-opt{
+  flex:1;text-align:center;padding:9px 4px;font-size:13px;font-weight:600;
+  font-family:var(--ff-b);color:var(--text-3);cursor:pointer;border-radius:var(--r-sm);transition:all .2s;
+}
+.bill-opt.active{background:var(--surface);color:var(--text-1);box-shadow:var(--sh-sm)}
+.save-badge{
+  display:inline-block;background:rgba(22,163,74,.15);color:#15803d;
+  font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;
+}
+
+/* Price */
+.price-block{padding:16px 20px 0;text-align:center}
+.price-main{font-size:44px;font-weight:700;font-family:var(--ff-d);color:var(--text-1);line-height:1}
+.price-main sup{font-size:20px;font-weight:500;color:var(--text-3);vertical-align:super;font-family:var(--ff-b)}
+.price-period{font-size:14px;color:var(--text-3);font-family:var(--ff-b);margin-top:4px}
+.price-note{font-size:12px;color:var(--success);font-weight:500;font-family:var(--ff-b);margin-top:2px}
+
+/* Features */
+.feat-list{padding:16px 20px 0;display:flex;flex-direction:column;gap:10px}
+.feat-item{display:flex;align-items:flex-start;gap:10px}
+.feat-check{
+  width:22px;height:22px;border-radius:50%;background:var(--accent-light);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.feat-check svg{width:11px;height:11px;stroke:var(--accent);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.feat-txt{flex:1}
+.feat-title{font-size:13px;font-weight:600;color:var(--text-1);font-family:var(--ff-b);margin-bottom:1px}
+.feat-desc{font-size:11px;color:var(--text-3);font-family:var(--ff-b)}
+
+.get-prem-btn{
+  margin:20px 20px 0;width:calc(100% - 40px);padding:16px;
+  background:linear-gradient(135deg,var(--accent) 0%,#5b21b6 100%);
+  color:#fff;font-size:16px;font-weight:700;font-family:var(--ff-d);
+  border:none;border-radius:var(--r-md);cursor:pointer;
+  box-shadow:0 6px 24px rgba(124,58,237,.36);transition:transform .15s,box-shadow .15s;
+}
+.get-prem-btn:active{transform:scale(.98);box-shadow:0 3px 12px rgba(124,58,237,.25)}
+
+.prem-fine{padding:10px 20px 0;text-align:center;font-size:11px;color:var(--text-3);font-family:var(--ff-b);line-height:1.5}
+
+/* ──────────────────────────────────────────
+   PROFILE SCREEN
+────────────────────────────────────────── */
+.prof-hero{padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center}
+.avatar{
+  width:74px;height:74px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:700;color:#fff;font-family:var(--ff-d);
+  margin-bottom:10px;box-shadow:0 4px 18px rgba(124,58,237,.3);
+}
+.prof-name{font-size:19px;font-weight:700;font-family:var(--ff-d);color:var(--text-1);margin-bottom:2px}
+.prof-handle{font-size:13px;color:var(--text-3);font-family:var(--ff-b);margin-bottom:10px}
+.prof-prem-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:linear-gradient(135deg,var(--premium),var(--premium-light,#fde68a));
+  color:#1a0a00;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;font-family:var(--ff-b);
+}
+
+.prof-stats{
+  display:flex;margin:14px 20px 0;background:var(--surface);
+  border-radius:var(--r-md);border:1px solid var(--border);overflow:hidden;box-shadow:var(--sh-sm);
+}
+.stat-col{flex:1;padding:14px 8px;text-align:center;border-right:1px solid var(--border)}
+.stat-col:last-child{border-right:none}
+.stat-val{font-size:22px;font-weight:700;font-family:var(--ff-d);color:var(--text-1)}
+.stat-lbl{font-size:10px;color:var(--text-3);font-family:var(--ff-b);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+
+.settings-sec{padding:16px 20px 0}
+.settings-grp{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-md);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh-sm);
+}
+.settings-row{
+  display:flex;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;gap:12px;
+}
+.settings-row:last-child{border-bottom:none}
+.s-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.s-row-info{flex:1}
+.s-row-lbl{font-size:14px;font-weight:500;color:var(--text-1);font-family:var(--ff-b)}
+.s-row-sub{font-size:11px;color:var(--text-3);font-family:var(--ff-b);margin-top:1px}
+.s-arrow{font-size:12px;color:var(--text-3)}
+
+/* ──────────────────────────────────────────
+   EVENT DETAIL MODAL (Bottom Sheet)
+────────────────────────────────────────── */
+.modal-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  z-index:200;display:flex;flex-direction:column;justify-content:flex-end;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+
+.modal-sheet{
+  background:var(--surface);border-radius:28px 28px 0 0;
+  max-height:86%;overflow-y:auto;overflow-x:hidden;
+  transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.25,.46,.45,.94);
+}
+.modal-sheet::-webkit-scrollbar{display:none}
+.modal-overlay.open .modal-sheet{transform:translateY(0)}
+
+.modal-grip{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 0}
+
+.modal-img{height:196px;margin:12px 16px 0;border-radius:20px;overflow:hidden;position:relative}
+.modal-img-bg{width:100%;height:100%}
+.modal-img-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.8}
+.modal-close{
+  position:absolute;top:12px;right:12px;width:32px;height:32px;
+  background:rgba(0,0,0,.45);border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border:none;color:#fff;font-size:17px;line-height:1;font-family:var(--ff-b);
+}
+
+.modal-body{padding:16px 20px}
+.modal-cat{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-family:var(--ff-b);margin-bottom:4px}
+.modal-title{font-size:23px;font-weight:700;font-family:var(--ff-d);color:var(--text-1);line-height:1.15;margin-bottom:14px}
+
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.mgi{background:var(--surface-2);border-radius:var(--r-sm);padding:10px 12px;border:1px solid var(--border)}
+.mgi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);font-family:var(--ff-b);margin-bottom:3px}
+.mgi-val{font-size:13px;font-weight:600;color:var(--text-1);font-family:var(--ff-b)}
+
+.modal-desc{font-size:14px;line-height:1.65;color:var(--text-2);font-family:var(--ff-b);margin-bottom:14px}
+
+.attendees-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.av-stack{display:flex}
+.av{
+  width:28px;height:28px;border-radius:50%;border:2.5px solid #fff;
+  margin-left:-9px;font-size:11px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#fff;font-family:var(--ff-b);flex-shrink:0;
+}
+.av:first-child{margin-left:0}
+.av1{background:#7c3aed}.av2{background:#dc2626}.av3{background:#d97706}.av4{background:#059669}
+.att-txt{font-size:12px;color:var(--text-2);font-family:var(--ff-b)}
+.att-txt strong{color:var(--text-1);font-weight:600}
+
+.modal-join-btn{
+  width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#5b21b6);
+  color:#fff;font-size:16px;font-weight:700;font-family:var(--ff-d);
+  border:none;border-radius:var(--r-md);cursor:pointer;
+  box-shadow:0 6px 20px rgba(124,58,237,.3);transition:all .2s;margin-bottom:4px;
+}
+.modal-join-btn.joined-st{background:var(--surface-2);color:var(--text-2);box-shadow:none;border:1.5px solid var(--border)}
+.modal-price-note{text-align:center;font-size:12px;color:var(--text-3);font-family:var(--ff-b)}
+
+/* Responsive */
+@media (max-width:430px) {
+  .phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none}
+  body{padding:0}
+  .page-wrap{gap:0}
+  .page-label{display:none}
+}
+@media (max-height:900px) and (min-width:431px) {
+  .phone{height:calc(100vh - 80px);width:auto;aspect-ratio:390/844}
+}
+</style>
+
+<div class="page-wrap">
+  <span class="page-label">CityPulse · iOS Prototype</span>
+
+  <div class="phone">
+    <div class="di"></div>
+
+    <!-- Status Bar -->
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <div class="sb-icons">
+        <svg viewBox="0 0 20 14"><rect x="0" y="3" width="3" height="11" rx="1"/><rect x="5" y="2" width="3" height="12" rx="1" opacity=".4"/><rect x="10" y="0" width="3" height="14" rx="1" opacity=".4"/><rect x="15" y="4" width="4" height="7" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="16" y="6" width="2" height="3" rx=".5"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 25 13"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="2" y="2" width="16" height="9" rx="2" fill="currentColor"/><path d="M23 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity=".4"/></svg>
+      </div>
+    </div>
+
+    <!-- Screens -->
+    <div class="screens">
+
+      <!-- ── DISCOVER ── -->
+      <div class="screen active" id="s-discover">
+
+        <div class="app-hdr">
+          <button class="loc-btn">
+            <div class="loc-eyebrow">Your City</div>
+            <div class="loc-name">Mumbai <span class="loc-chevron">▾</span></div>
+          </button>
+          <div class="hdr-btns">
+            <div class="icon-btn">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <div class="icon-btn" style="position:relative">
+              <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <div class="notif-dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sponsored Carousel -->
+        <div class="carousel-wrap">
+          <div class="sponsored-lbl">Featured &amp; Exclusive</div>
+          <div class="carousel" id="main-carousel">
+            <div class="carousel-track" id="carousel-track">
+              <!-- Slide 1 -->
+              <div class="cslide cs1">
+                <div class="cslide-decor"></div>
+                <div class="cslide-content">
+                  <div class="cslide-tag">★ Sponsored by SonyLIV</div>
+                  <div class="cslide-by">Music Festival</div>
+                  <div class="cslide-title">Techno Voyage<br>2026</div>
+                  <div class="cslide-meta">
+                    <span class="cslide-date">Sat, Aug 29 · 8PM</span>
+                    <span class="cslide-price cp-paid">₹2,500</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Slide 2 -->
+              <div class="cslide cs2">
+                <div class="cslide-decor"></div>
+                <div class="cslide-content">
+                  <div class="cslide-tag">★ Sponsored by Zomato</div>
+                  <div class="cslide-by">Food & Culture</div>
+                  <div class="cslide-title">The Grand<br>Food Carnival</div>
+                  <div class="cslide-meta">
+                    <span class="cslide-date">Aug 30–31 · All Day</span>
+                    <span class="cslide-price cp-free">Free Entry</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Slide 3 -->
+              <div class="cslide cs3">
+                <div class="cslide-decor"></div>
+                <div class="cslide-content">
+                  <div class="cslide-tag">★ Premium Members Early Access</div>
+                  <div class="cslide-by">Digital Art</div>
+                  <div class="cslide-title">Neon Visions:<br>Digital Art Week</div>
+                  <div class="cslide-meta">
+                    <span class="cslide-date">Through Sep 5</span>
+                    <span class="cslide-price cp-premium">Members Free</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-dots">
+            <button class="dot active" onclick="goSlide(0)"></button>
+            <button class="dot" onclick="goSlide(1)"></button>
+            <button class="dot" onclick="goSlide(2)"></button>
+          </div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="pills-wrap">
+          <div class="pills-track">
+            <button class="pill active" onclick="setPill(this)">All</button>
+            <button class="pill" onclick="setPill(this)">🎵 Music</button>
+            <button class="pill" onclick="setPill(this)">🍔 Food</button>
+            <button class="pill" onclick="setPill(this)">🎨 Arts</button>
+            <button class="pill" onclick="setPill(this)">⚽ Sports</button>
+            <button class="pill" onclick="setPill(this)">🌙 Nightlife</button>
+            <button class="pill" onclick="setPill(this)">🧘 Wellness</button>
+          </div>
+        </div>
+
+        <!-- Today's Events -->
+        <div class="sec-hdr">
+          <span class="sec-title">Happening Today</span>
+          <span class="sec-link">See all</span>
+        </div>
+
+        <div class="events-feed">
+          <div class="ev-card" onclick="openModal('Jazz Under the Stars','Music','Tonight 8PM','Blue Frog, Lower Parel','₹1,200','Immerse yourself in live jazz with Mumbai\'s finest quartet. Rooftop setting with city views, cocktails, and an unforgettable night of music under the stars.','🎷','t-music','Aug 27')">
+            <div class="ev-thumb"><div class="ev-thumb-bg t-music"></div><div class="ev-thumb-icon">🎷</div></div>
+            <div class="ev-body">
+              <div class="ev-cat">Music</div>
+              <div class="ev-name">Jazz Under the Stars</div>
+              <div class="ev-bottom">
+                <div class="ev-info">
+                  <span class="ev-when">Tonight · 8:00 PM</span>
+                  <span class="ev-where">Blue Frog, Lower Parel</span>
+                </div>
+                <button class="join-sm" onclick="event.stopPropagation();toggleJoin(this)">Join</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ev-card" onclick="openModal('Rooftop Yoga Flow','Wellness','6:30 AM','Sky Garden, Bandra','₹500','Begin your day high above the city. This 75-min guided vinyasa flow blends breathwork with movement, overlooking the Bandra skyline at sunrise.','🧘','t-wellness','Aug 27')">
+            <div class="ev-thumb"><div class="ev-thumb-bg t-wellness"></div><div class="ev-thumb-icon">🧘</div></div>
+            <div class="ev-body">
+              <div class="ev-cat">Wellness</div>
+              <div class="ev-name">Rooftop Yoga Flow</div>
+              <div class="ev-bottom">
+                <div class="ev-info">
+                  <span class="ev-when">Tomorrow · 6:30 AM</span>
+                  <span class="ev-where">Sky Garden, Bandra</span>
+                </div>
+                <button class="join-sm" onclick="event.stopPropagation();toggleJoin(this)">Join</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ev-card" onclick="openModal('Street Photography Walk','Arts','4:00 PM','Colaba Causeway','Free','Walk the iconic lanes of Colaba with a professional photographer. Learn composition, light reading, and street storytelling in this 2-hour guided visual journey.','📸','t-arts','Aug 27')">
+            <div class="ev-thumb"><div class="ev-thumb-bg t-arts"></div><div class="ev-thumb-icon">📸</div></div>
+            <div class="ev-body">
+              <div class="ev-cat">Arts</div>
+              <div class="ev-name">Street Photography Walk</div>
+              <div class="ev-bottom">
+                <div class="ev-info">
+                  <span class="ev-when">Today · 4:00 PM</span>
+                  <span class="ev-where">Colaba Causeway</span>
+                </div>
+                <button class="join-sm" onclick="event.stopPropagation();toggleJoin(this)">Join</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Premium Banner -->
+        <div class="prem-banner" onclick="switchTab('premium')">
+          <div class="prem-banner-icon">👑</div>
+          <div class="prem-banner-txt">
+            <div class="prem-banner-title">Unlock CityPulse Premium</div>
+            <div class="prem-banner-sub">Early access, exclusive events & no ads</div>
+          </div>
+          <div class="prem-banner-cta">Try Free</div>
+        </div>
+
+        <!-- This Weekend -->
+        <div class="sec-hdr">
+          <span class="sec-title">This Weekend</span>
+          <span class="sec-link">See all</span>
+        </div>
+
+        <div class="h-wrap" style="padding-bottom:4px">
+          <div class="h-track">
+            <div class="hev-card" onclick="openModal('Mumbai Marathon 2026','Sports','6:00 AM','Marine Lines','Free','The city runs together. 42km of energy, cheering crowds, and the iconic Marine Drive seafront stretch. Open to all fitness levels with 5K, 10K and full marathon categories.','🏃','t-sports','Aug 31')">
+              <div class="hev-thumb"><div class="hev-thumb-bg t-sports"></div><div class="hev-thumb-icon">🏃</div></div>
+              <div class="hev-info">
+                <div class="hev-name">Mumbai Marathon</div>
+                <div class="hev-date">Sun · 6:00 AM</div>
+                <div class="hev-price free-tag">Free</div>
+              </div>
+            </div>
+            <div class="hev-card" onclick="openModal('Indie Film Night','Arts','7:00 PM','PVR ECX, Andheri','₹350','A curated selection of award-winning indie short films followed by a Q&A with the directors. Wine and artisan snacks included.','🎬','t-arts','Aug 30')">
+              <div class="hev-thumb"><div class="hev-thumb-bg t-arts"></div><div class="hev-thumb-icon">🎬</div></div>
+              <div class="hev-info">
+                <div class="hev-name">Indie Film Night</div>
+                <div class="hev-date">Sat · 7:00 PM</div>
+                <div class="hev-price">₹350</div>
+              </div>
+            </div>
+            <div class="hev-card" onclick="openModal('Chef\'s Table: Local Flavors','Food','7:30 PM','Taj Lands End','₹3,500','An intimate 8-course tasting menu celebrating seasonal, locally sourced produce. Crafted by Chef Arjun Mehta with wine pairings.','👨‍🍳','t-food','Aug 30')">
+              <div class="hev-thumb"><div class="hev-thumb-bg t-food"></div><div class="hev-thumb-icon">👨‍🍳</div></div>
+              <div class="hev-info">
+                <div class="hev-name">Chef's Table</div>
+                <div class="hev-date">Sat · 7:30 PM</div>
+                <div class="hev-price">₹3,500</div>
+              </div>
+            </div>
+            <div class="hev-card" onclick="openModal('Comedy Warehouse','Nightlife','9:00 PM','Canvas Laugh Club','₹600','Mumbai\'s top stand-up comedians take the stage in this raucous two-hour showcase. Table service available. 18+ only.','😂','t-night','Aug 29')">
+              <div class="hev-thumb"><div class="hev-thumb-bg t-night"></div><div class="hev-thumb-icon">😂</div></div>
+              <div class="hev-info">
+                <div class="hev-name">Comedy Warehouse</div>
+                <div class="hev-date">Sat · 9:00 PM</div>
+                <div class="hev-price">₹600</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:8px"></div>
+      </div><!-- /discover -->
+
+      <!-- ── EXPLORE ── -->
+      <div class="screen" id="s-explore">
+        <div class="screen-hdr" style="padding-top:8px">
+          <div class="screen-ttl">Explore</div>
+          <div class="screen-sub">Discover what's on in Mumbai</div>
+        </div>
+        <div class="search-wrap">
+          <div class="search-bar">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search events, venues, artists…">
+          </div>
+        </div>
+
+        <div class="sec-hdr" style="padding-top:4px">
+          <span class="sec-title">Browse Categories</span>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-tile ct-music"><span class="cat-emoji">🎵</span><span class="cat-lbl">Music</span></div>
+          <div class="cat-tile ct-food"><span class="cat-emoji">🍔</span><span class="cat-lbl">Food</span></div>
+          <div class="cat-tile ct-arts"><span class="cat-emoji">🎨</span><span class="cat-lbl">Arts</span></div>
+          <div class="cat-tile ct-sports"><span class="cat-emoji">⚽</span><span class="cat-lbl">Sports</span></div>
+          <div class="cat-tile ct-night"><span class="cat-emoji">🌙</span><span class="cat-lbl">Nightlife</span></div>
+          <div class="cat-tile ct-wellness"><span class="cat-emoji">🧘</span><span class="cat-lbl">Wellness</span></div>
+        </div>
+
+        <div class="sec-hdr">
+          <span class="sec-title">Trending Now 🔥</span>
+        </div>
+        <div class="trending-list">
+          <div class="trend-item">
+            <span class="trend-num">1</span>
+            <div class="trend-info"><div class="trend-name">Techno Voyage 2026</div><div class="trend-cat">Music · Sat Aug 29</div></div>
+            <span class="trend-count">4.2k joining</span>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">2</span>
+            <div class="trend-info"><div class="trend-name">Mumbai Marathon</div><div class="trend-cat">Sports · Sun Aug 31</div></div>
+            <span class="trend-count">12.8k joining</span>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">3</span>
+            <div class="trend-info"><div class="trend-name">Grand Food Carnival</div><div class="trend-cat">Food · Aug 30–31</div></div>
+            <span class="trend-count">8.1k joining</span>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">4</span>
+            <div class="trend-info"><div class="trend-name">Neon Visions Art Week</div><div class="trend-cat">Arts · Through Sep 5</div></div>
+            <span class="trend-count">3.6k joining</span>
+          </div>
+          <div class="trend-item">
+            <span class="trend-num">5</span>
+            <div class="trend-info"><div class="trend-name">Comedy Warehouse</div><div class="trend-cat">Nightlife · Sat Aug 29</div></div>
+            <span class="trend-count">1.9k joining</span>
+          </div>
+        </div>
+      </div><!-- /explore -->
+
+      <!-- ── MY EVENTS ── -->
+      <div class="screen" id="s-events">
+        <div class="screen-hdr" style="padding-top:8px">
+          <div class="screen-ttl">My Events</div>
+        </div>
+        <div class="my-tabs">
+          <div class="my-tab active" onclick="setMyTab(this,'upcoming')">Upcoming</div>
+          <div class="my-tab" onclick="setMyTab(this,'past')">Past</div>
+        </div>
+
+        <div id="my-upcoming">
+          <div class="my-ev">
+            <div class="date-badge"><div class="date-badge-mo">Aug</div><div class="date-badge-d">27</div></div>
+            <div class="my-ev-info">
+              <div class="my-ev-name">Jazz Under the Stars</div>
+              <div class="my-ev-venue">Blue Frog, Lower Parel · 8:00 PM</div>
+              <span class="status-chip s-conf">✓ Confirmed</span>
+            </div>
+          </div>
+          <div class="my-ev">
+            <div class="date-badge"><div class="date-badge-mo">Aug</div><div class="date-badge-d">29</div></div>
+            <div class="my-ev-info">
+              <div class="my-ev-name">Techno Voyage 2026</div>
+              <div class="my-ev-venue">NSCI Dome · 8:00 PM</div>
+              <span class="status-chip s-wait">⟳ Waitlist #47</span>
+            </div>
+          </div>
+          <div class="my-ev">
+            <div class="date-badge"><div class="date-badge-mo">Aug</div><div class="date-badge-d">31</div></div>
+            <div class="my-ev-info">
+              <div class="my-ev-name">Mumbai Marathon 2026</div>
+              <div class="my-ev-venue">Marine Lines · 6:00 AM</div>
+              <span class="status-chip s-conf">✓ Confirmed</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="my-past" style="display:none">
+          <div class="my-ev" style="opacity:.7">
+            <div class="date-badge"><div class="date-badge-mo">Mar</div><div class="date-badge-d">14</div></div>
+            <div class="my-ev-info">
+              <div class="my-ev-name">Holi Music Festival</div>
+              <div class="my-ev-venue">Mahalaxmi Racecourse</div>
+              <span class="status-chip s-past">Attended</span>
+            </div>
+          </div>
+          <div class="my-ev" style="opacity:.7">
+            <div class="date-badge"><div class="date-badge-mo">Jul</div><div class="date-badge-d">20</div></div>
+            <div class="my-ev-info">
+              <div class="my-ev-name">Food Truck Rally</div>
+              <div class="my-ev-venue">Carter Road, Bandra</div>
+              <span class="status-chip s-past">Attended</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /my events -->
+
+      <!-- ── PREMIUM ── -->
+      <div class="screen" id="s-premium">
+        <div class="prem-hero">
+          <span class="prem-gold-tag">✦ CityPulse Premium</span>
+          <span class="prem-crown">👑</span>
+          <div class="prem-hero-title">Your city,<br>fully unlocked.</div>
+          <div class="prem-hero-sub">Get early access, exclusive drops, and a city experience that's entirely your own.</div>
+        </div>
+
+        <!-- Billing Toggle -->
+        <div class="billing-wrap">
+          <div class="billing-toggle">
+            <div class="bill-opt" onclick="setBilling('monthly',this)">Monthly</div>
+            <div class="bill-opt active" onclick="setBilling('annual',this)">Annual <span class="save-badge">Save 34%</span></div>
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="price-block">
+          <div class="price-main" id="price-val"><sup>₹</sup>199</div>
+          <div class="price-period" id="price-period">per month</div>
+          <div class="price-note" id="price-note">Billed ₹2,388/year · Cancel anytime</div>
+        </div>
+
+        <!-- Features -->
+        <div class="feat-list">
+          <div class="feat-item">
+            <div class="feat-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+            <div class="feat-txt">
+              <div class="feat-title">24-Hour Early Access</div>
+              <div class="feat-desc">Book tickets before they go public</div>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+            <div class="feat-txt">
+              <div class="feat-title">Exclusive Premium Events</div>
+              <div class="feat-desc">Members-only concerts, dinners & experiences</div>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+            <div class="feat-txt">
+              <div class="feat-title">Zero Ads</div>
+              <div class="feat-desc">Clean, distraction-free event discovery</div>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+            <div class="feat-txt">
+              <div class="feat-title">Priority Guest List</div>
+              <div class="feat-desc">Skip queues at partner venues</div>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+            <div class="feat-txt">
+              <div class="feat-title">Smart Picks</div>
+              <div class="feat-desc">Personalized recommendations curated for you</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="get-prem-btn">Start 7-Day Free Trial</button>
+        <div class="prem-fine">No charge for 7 days. Cancel any time before trial ends.<br>Prices in INR. Subscription auto-renews.</div>
+        <div style="height:16px"></div>
+      </div><!-- /premium -->
+
+      <!-- ── PROFILE ── -->
+      <div class="screen" id="s-profile">
+        <div class="screen-hdr" style="padding-top:8px">
+          <div class="screen-ttl">Profile</div>
+        </div>
+        <div class="prof-hero">
+          <div class="avatar">AJ</div>
+          <div class="prof-name">Ajinkya</div>
+          <div class="prof-handle">@ajinkya · Mumbai</div>
+          <div class="prof-prem-badge">👑 Premium Member</div>
+        </div>
+
+        <div class="prof-stats">
+          <div class="stat-col"><div class="stat-val">23</div><div class="stat-lbl">Events</div></div>
+          <div class="stat-col"><div class="stat-val">4</div><div class="stat-lbl">Cities</div></div>
+          <div class="stat-col"><div class="stat-val">8</div><div class="stat-lbl">Following</div></div>
+        </div>
+
+        <div class="settings-sec">
+          <div class="settings-grp">
+            <div class="settings-row">
+              <div class="s-icon" style="background:#EDE9FE">🎟️</div>
+              <div class="s-row-info"><div class="s-row-lbl">My Tickets</div><div class="s-row-sub">2 upcoming events</div></div>
+              <span class="s-arrow">›</span>
+            </div>
+            <div class="settings-row">
+              <div class="s-icon" style="background:#FEF3C7">👑</div>
+              <div class="s-row-info"><div class="s-row-lbl">Premium Plan</div><div class="s-row-sub">Active · Renews Sep 27</div></div>
+              <span class="s-arrow">›</span>
+            </div>
+            <div class="settings-row">
+              <div class="s-icon" style="background:#FFE4E8">❤️</div>
+              <div class="s-row-info"><div class="s-row-lbl">Saved Events</div><div class="s-row-sub">12 saved</div></div>
+              <span class="s-arrow">›</span>
+            </div>
+          </div>
+          <div class="settings-grp">
+            <div class="settings-row">
+              <div class="s-icon" style="background:#E0F2FE">🔔</div>
+              <div class="s-row-info"><div class="s-row-lbl">Notifications</div><div class="s-row-sub">Personalized alerts on</div></div>
+              <span class="s-arrow">›</span>
+            </div>
+            <div class="settings-row">
+              <div class="s-icon" style="background:#DCFCE7">📍</div>
+              <div class="s-row-info"><div class="s-row-lbl">Location & Cities</div><div class="s-row-sub">Mumbai (primary)</div></div>
+              <span class="s-arrow">›</span>
+            </div>
+            <div class="settings-row">
+              <div class="s-icon" style="background:#F5F5F5">⚙️</div>
+              <div class="s-row-info"><div class="s-row-lbl">Preferences</div></div>
+              <span class="s-arrow">›</span>
+            </div>
+          </div>
+        </div>
+        <div style="height:8px"></div>
+      </div><!-- /profile -->
+
+      <!-- EVENT MODAL -->
+      <div class="modal-overlay" id="modal-overlay" onclick="closeModalIfBg(event)">
+        <div class="modal-sheet">
+          <div class="modal-grip"></div>
+          <div class="modal-img" id="modal-img">
+            <div class="modal-img-bg" id="modal-img-bg"></div>
+            <div class="modal-img-icon" id="modal-img-icon"></div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-cat" id="modal-cat"></div>
+            <div class="modal-title" id="modal-title"></div>
+            <div class="modal-grid">
+              <div class="mgi"><div class="mgi-lbl">Date & Time</div><div class="mgi-val" id="modal-time"></div></div>
+              <div class="mgi"><div class="mgi-lbl">Venue</div><div class="mgi-val" id="modal-venue"></div></div>
+              <div class="mgi"><div class="mgi-lbl">Price</div><div class="mgi-val" id="modal-price"></div></div>
+              <div class="mgi"><div class="mgi-lbl">Category</div><div class="mgi-val" id="modal-cat2"></div></div>
+            </div>
+            <div class="modal-desc" id="modal-desc"></div>
+            <div class="attendees-row">
+              <div class="av-stack">
+                <div class="av av1">R</div><div class="av av2">P</div><div class="av av3">S</div><div class="av av4">M</div>
+              </div>
+              <span class="att-txt"><strong id="modal-att-count">247</strong> people joining</span>
+            </div>
+            <button class="modal-join-btn" id="modal-join-btn" onclick="toggleModalJoin()">Join Event</button>
+            <div class="modal-price-note" id="modal-price-note">Tap to confirm your spot</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /screens -->
+
+    <!-- Tab Bar -->
+    <div class="tabbar">
+      <div class="tab active" onclick="switchTab('discover')" data-tab="discover">
+        <div class="tab-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <span class="tab-lbl">Discover</span>
+      </div>
+      <div class="tab" onclick="switchTab('explore')" data-tab="explore">
+        <div class="tab-icon-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <span class="tab-lbl">Explore</span>
+      </div>
+      <div class="tab" onclick="switchTab('events')" data-tab="events">
+        <div class="tab-icon-wrap" style="position:relative">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+        <span class="tab-lbl">My Events</span>
+      </div>
+      <div class="tab" onclick="switchTab('premium')" data-tab="premium">
+        <div class="tab-icon-wrap">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <span class="tab-lbl">Premium</span>
+      </div>
+      <div class="tab" onclick="switchTab('profile')" data-tab="profile">
+        <div class="tab-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span class="tab-lbl">Profile</span>
+      </div>
+    </div>
+
+    <div class="home-ind"><div class="home-ind-bar"></div></div>
+  </div><!-- /phone -->
+
+  <span class="page-label" style="margin-top:4px;font-size:11px;opacity:.25">Tap to navigate · Swipe events · Join, explore & subscribe</span>
+</div>
+
+<script>
+// ── Tab Navigation ──
+function switchTab(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  document.querySelector('.tab[data-tab="' + id + '"]').classList.add('active');
+}
+
+// ── Category Pill ──
+function setPill(el) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── My Events Tabs ──
+function setMyTab(el, which) {
+  document.querySelectorAll('.my-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('my-upcoming').style.display = which === 'upcoming' ? 'block' : 'none';
+  document.getElementById('my-past').style.display = which === 'past' ? 'block' : 'none';
+}
+
+// ── Join Button Toggle ──
+function toggleJoin(btn) {
+  const joined = btn.classList.toggle('joined');
+  btn.textContent = joined ? 'Joined ✓' : 'Join';
+}
+
+// ── Billing Toggle ──
+const prices = {
+  monthly: { val: '₹299', period: 'per month', note: 'Billed monthly · Cancel anytime' },
+  annual:  { val: '₹199', period: 'per month', note: 'Billed ₹2,388/year · Cancel anytime' }
+};
+function setBilling(plan, el) {
+  document.querySelectorAll('.bill-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  const p = prices[plan];
+  const valEl = document.getElementById('price-val');
+  valEl.innerHTML = '<sup>₹</sup>' + p.val.replace('₹','');
+  document.getElementById('price-period').textContent = p.period;
+  document.getElementById('price-note').textContent = p.note;
+}
+
+// ── Event Modal ──
+let modalJoined = false;
+const thumbClasses = {
+  't-music': 'background:linear-gradient(140deg,#3b0764,#7c3aed)',
+  't-food':  'background:linear-gradient(140deg,#78350f,#f97316)',
+  't-arts':  'background:linear-gradient(140deg,#0c4a6e,#06b6d4)',
+  't-sports':'background:linear-gradient(140deg,#052e16,#16a34a)',
+  't-night': 'background:linear-gradient(140deg,#1c1c2e,#be185d)',
+  't-wellness':'background:linear-gradient(140deg,#14532d,#4ade80)'
+};
+const attCounts = { 'Jazz Under the Stars':247, 'Rooftop Yoga Flow':83, 'Street Photography Walk':56,
+  'Mumbai Marathon 2026':12843, 'Indie Film Night':132, "Chef's Table: Local Flavors":18,
+  'Comedy Warehouse':394 };
+
+function openModal(name, cat, time, venue, price, desc, icon, thumbClass, date) {
+  modalJoined = false;
+  document.getElementById('modal-cat').textContent = cat;
+  document.getElementById('modal-cat2').textContent = cat;
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-time').textContent = date + ' · ' + time;
+  document.getElementById('modal-venue').textContent = venue;
+  document.getElementById('modal-price').textContent = price;
+  document.getElementById('modal-desc').textContent = desc;
+  document.getElementById('modal-img-icon').textContent = icon;
+  document.getElementById('modal-img-bg').style = thumbClasses[thumbClass] || 'background:#3b1080';
+  const ct = attCounts[name] || Math.floor(Math.random() * 500 + 50);
+  document.getElementById('modal-att-count').textContent = ct.toLocaleString();
+  const btn = document.getElementById('modal-join-btn');
+  btn.textContent = 'Join Event';
+  btn.className = 'modal-join-btn';
+  document.getElementById('modal-price-note').textContent = price === 'Free' ? 'Free to join · Reserve your spot' : 'Tap to confirm · ' + price + ' per person';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function closeModalIfBg(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function toggleModalJoin() {
+  modalJoined = !modalJoined;
+  const btn = document.getElementById('modal-join-btn');
+  if (modalJoined) {
+    btn.textContent = '✓ You\'re Going!';
+    btn.className = 'modal-join-btn joined-st';
+    document.getElementById('modal-price-note').textContent = 'Added to My Events · You\'ll receive a reminder';
+  } else {
+    btn.textContent = 'Join Event';
+    btn.className = 'modal-join-btn';
+    document.getElementById('modal-price-note').textContent = 'Tap to confirm your spot';
+  }
+}
+
+// ── Carousel Auto-Rotate ──
+let currentSlide = 0;
+const total = 3;
+let carouselTimer;
+
+function goSlide(idx) {
+  currentSlide = idx;
+  document.getElementById('carousel-track').style.transform = `translateX(-${idx * 33.333}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+function startCarousel() {
+  carouselTimer = setInterval(() => {
+    goSlide((currentSlide + 1) % total);
+  }, 4000);
+}
+
+function stopCarousel() { clearInterval(carouselTimer); }
+
+const carousel = document.getElementById('main-carousel');
+carousel.addEventListener('mouseenter', stopCarousel);
+carousel.addEventListener('mouseleave', startCarousel);
+carousel.addEventListener('touchstart', stopCarousel, {passive:true});
+carousel.addEventListener('touchend', () => setTimeout(startCarousel, 2000));
+
+startCarousel();
+
+// ── Carousel Touch Swipe ──
+let touchStartX = 0;
+carousel.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+carousel.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) goSlide(dx < 0 ? Math.min(currentSlide+1,total-1) : Math.max(currentSlide-1,0));
+});
+</script>
